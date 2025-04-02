@@ -3,6 +3,7 @@ import pygetwindow as gw
 from pynput import mouse
 import time
 from PIL import Image
+import keyboard
 
 # Get the window
 try:
@@ -44,37 +45,63 @@ def get_pixel_color(x, y):
 time.sleep(3)
 print(f"Click coordinates: {click_coordinates}")
 
-for coord in click_coordinates:
-    pyautogui.moveTo(window.left + coord[0], window.top + coord[1])
-    time.sleep(1)
-    pyautogui.mouseDown(window.left + coord[0], window.top + coord[1])
-    time.sleep(0.01)
-    pyautogui.mouseUp()
-    print(f"Clicked at ({coord[0]}, {coord[1]})")
+try:
+    while True:
+        if keyboard.is_pressed('q'):
+            print("Exiting...")
+            break
 
-    time.sleep(4)
+        # Check if the coordinates are valid
+        for coord in click_coordinates:
 
-    # Define the region to check for the color
-    # check_x = window.left + 740
-    # check_y = window.top + 53
-    enemy_rarity_x = int(window.width * 0.633)
-    enemy_rarity_y = int(window.height * 0.077)
-    check_x = window.left + enemy_rarity_x
-    check_y = window.top + enemy_rarity_y
+            pyautogui.moveTo(window.left + coord[0], window.top + coord[1])
+            time.sleep(1)
+            pyautogui.mouseDown(window.left + coord[0], window.top + coord[1])
+            time.sleep(0.01)
+            pyautogui.mouseUp()
+            print(f"Clicked at ({coord[0]}, {coord[1]})")
 
-    color = get_pixel_color(check_x, check_y)
-    print(f"Color at ({check_x}, {check_y}): {color}")
-    pyautogui.moveTo(check_x, check_y)
+            time.sleep(4)
 
-    if color == (98, 98, 98):
-        print("Common")
-        time.sleep(1)
-        pyautogui.mouseDown(window.left + 328, window.top + 621)
-        time.sleep(0.01)
-        pyautogui.mouseUp()
-    else:
-        print("Not common")
+            # Define the region to check for the color
+            # check_x = window.left + 740
+            # check_y = window.top + 53
+            enemy_rarity_x = int(window.width * 0.633)
+            enemy_rarity_y = int(window.height * 0.077)
+            check_x = window.left + enemy_rarity_x
+            check_y = window.top + enemy_rarity_y
 
+            color = get_pixel_color(check_x, check_y)
+            print(f"Color at ({check_x}, {check_y}): {color}")
+            pyautogui.moveTo(check_x, check_y)
+            time.sleep(1)
+
+            while True:
+                if keyboard.is_pressed('q'):
+                    print("Exiting...")
+                    break
+
+                result_color = get_pixel_color(window.left + 272, window.top + 122)
+                # pyautogui.moveTo(window.left + 272, window.top + 122)
+                if color == (98, 98, 98): # Grey
+                    print("Common")
+                    time.sleep(1)
+                    pyautogui.mouseDown(window.left + 328, window.top + 621)
+                    time.sleep(0.01)
+                    pyautogui.mouseUp()
+                    
+                    if result_color == (107, 138, 19): # Green
+                        time.sleep(1)
+                        pyautogui.mouseDown(window.left + 574, window.top + 591)
+                        time.sleep(0.01)
+                        pyautogui.mouseUp()
+                        break
+                else:
+                    print("Not common")
+                    break
+            break
+except KeyboardInterrupt:
+    print("Program interrupted by user")
 
 
 
