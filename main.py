@@ -16,6 +16,17 @@ except IndexError:
 
 window.activate()
 
+# pyautogui.moveTo(window.left + 459, window.top + 279)
+
+# plat_train_response = input("Do you want to platinum train? (yes/no/y/n): ").strip().lower()
+
+# if plat_train_response not in ["yes", "y", "no", "n"]:
+#     print("Invalid input. Please restart the script and enter 'yes', 'no', 'y', or 'n'.")
+#     exit()
+
+# plat_train = plat_train_response == "yes" or plat_train_response == "y"
+# print(f"Platinum train: {plat_train}")
+
 # Store coordinates of search object
 click_coordinates = []
 
@@ -34,6 +45,7 @@ def on_click(x, y, button, pressed):
         else:
             print("Right click outside the window")
 
+print("Right click on the object you want to search for")
 with mouse.Listener(on_click=on_click) as listener:
     listener.join()
 
@@ -51,9 +63,8 @@ try:
             print("Exiting...")
             break
 
-        # Check if the coordinates are valid
         for coord in click_coordinates:
-
+            # Move the mouse to the search object and click
             pyautogui.moveTo(window.left + coord[0], window.top + coord[1])
             time.sleep(1)
             pyautogui.mouseDown(window.left + coord[0], window.top + coord[1])
@@ -63,7 +74,7 @@ try:
 
             time.sleep(4)
 
-            # Define the region to check for the color
+            # Define the region to check for the color of the enemy rarity
             # check_x = window.left + 740
             # check_y = window.top + 53
             enemy_rarity_x = int(window.width * 0.633)
@@ -82,16 +93,32 @@ try:
                     break
 
                 result_color = get_pixel_color(window.left + 272, window.top + 122)
+                result_color_2 = get_pixel_color(window.left + 459, window.top + 279)
+
                 # pyautogui.moveTo(window.left + 272, window.top + 122)
+                # Continue script if crit is common
+                # End script if crit is rare and above
                 if color == (98, 98, 98): # Grey
-                    print("Common")
+                    print(result_color_2)
                     time.sleep(1)
                     pyautogui.mouseDown(window.left + 328, window.top + 621)
                     time.sleep(0.01)
                     pyautogui.mouseUp()
+                    time.sleep(1)
+                    # pyautogui.moveTo(window.left + 459, window.top + 279)
+                    # time.sleep(1)
                     
-                    if result_color == (107, 138, 19): # Green
+                    if result_color_2 == (255, 255, 255) and result_color == (107, 138, 19): 
                         time.sleep(1)
+                        # Click continue on results screen
+                        pyautogui.mouseDown(window.left + 574, window.top + 591)
+                        time.sleep(0.01)
+                        pyautogui.mouseUp()
+                        exit()
+                        break
+                    if result_color_2 == (94, 108, 126):
+                        time.sleep(1)
+                        # Click continue on results screen
                         pyautogui.mouseDown(window.left + 574, window.top + 591)
                         time.sleep(0.01)
                         pyautogui.mouseUp()
@@ -102,14 +129,3 @@ try:
             break
 except KeyboardInterrupt:
     print("Program interrupted by user")
-
-
-
-
-# window.move(0, 0)
-# time.sleep(3)
-# pyautogui.moveTo(window.left + 100, window.top + 100)
-
-# window.minimize()
-# time.sleep(3)
-# window.restore()
