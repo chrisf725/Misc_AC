@@ -20,14 +20,14 @@ window.activate()
 
 # pyautogui.moveTo(window.left + 459, window.top + 279)
 
-# plat_train_response = input("Do you want to platinum train? (yes/no/y/n): ").strip().lower()
+plat_train_response = input("Do you want to platinum train? (yes/no/y/n): ").strip().lower()
 
-# if plat_train_response not in ["yes", "y", "no", "n"]:
-#     print("Invalid input. Please restart the script and enter 'yes', 'no', 'y', or 'n'.")
-#     exit()
+if plat_train_response not in ["yes", "y", "no", "n"]:
+    print("Invalid input. Please restart the script and enter 'yes', 'no', 'y', or 'n'.")
+    exit()
 
-# plat_train = plat_train_response == "yes" or plat_train_response == "y"
-# print(f"Platinum train: {plat_train}")
+plat_train = plat_train_response == "yes" or plat_train_response == "y"
+print(f"Platinum train: {plat_train}")
 
 # Store coordinates of search object
 click_coordinates = []
@@ -46,16 +46,6 @@ def on_click(x, y, button, pressed):
             return False
         else:
             print("Right click outside the window")
-
-print("Right click on the object you want to search for")
-with mouse.Listener(on_click=on_click) as listener:
-    listener.join()
-
-plat_train_response = input("Do you want to platinum train? (yes/no/y/n): ").strip().lower()
-
-if plat_train_response not in ["yes", "y", "no", "n"]:
-    print("Invalid input. Please restart the script and enter 'yes', 'no', 'y', or 'n'.")
-    exit()
 
 plat_train = plat_train_response == "yes" or plat_train_response == "y"
 print(f"Platinum train: {plat_train}")
@@ -142,35 +132,24 @@ try:
                         time.sleep(1)
 
                         if plat_train:
-                            # Click platinum train
-                            pyautogui.mouseDown(window.left + 517, window.top + 635) # Platinum train button
-                            time.sleep(0.01)
-                            pyautogui.mouseUp()
-                            time.sleep(1)
+                            for i in range(2):
+                                # Click platinum train
+                                pyautogui.mouseDown(window.left + 517, window.top + 635) # Platinum train button
+                                time.sleep(0.01)
+                                pyautogui.mouseUp()
+                                time.sleep(2)
 
                             pyautogui.mouseDown(window.left + 581, window.top + 639) # Continue button
                             time.sleep(0.01)
                             pyautogui.mouseUp()
                             time.sleep(1)
 
-                            # Exit training
-                            pyautogui.mouseDown(window.left + 928, window.top + 58) # Close button
-                            time.sleep(0.01)
-                            pyautogui.mouseUp()
-                            time.sleep(1)
-                        else:
-                            for i in range(2):
-                                # Click continue
-                                pyautogui.mouseDown(window.left + 711, window.top + 639) # Continue button
-                                time.sleep(0.01)
-                                pyautogui.mouseUp()
-                                time.sleep(1)
-
                             # Click continue again
                             pyautogui.mouseDown(window.left + 705, window.top + 483) # Second continue button
                             time.sleep(0.01)
                             pyautogui.mouseUp()
                             time.sleep(2)
+
                             result_color_3 = get_pixel_color(window.left + 464, window.top + 108)
                             print("Evolution", result_color_3)
                             time.sleep(1)
@@ -188,6 +167,50 @@ try:
                             time.sleep(0.01)
                             pyautogui.mouseUp()
                             time.sleep(2)
+
+                            result_color_4 = get_pixel_color(window.left + 593, window.top + 195)
+                            print("Rank upgrade", result_color_4)
+                            time.sleep(1)
+
+                            # Close rank upgrade screen
+                            if result_color_4 == (107, 138, 19):
+                                pyautogui.mouseDown(window.left + 589, window.top + 511) # Close button
+                                time.sleep(0.01)
+                                pyautogui.mouseUp()
+                                time.sleep(1)
+                            
+                        else:
+                            for i in range(2):
+                                # Click continue
+                                pyautogui.mouseDown(window.left + 711, window.top + 639) # Continue button
+                                time.sleep(0.01)
+                                pyautogui.mouseUp()
+                                time.sleep(1)
+
+                            # Click continue again
+                            pyautogui.mouseDown(window.left + 705, window.top + 483) # Second continue button
+                            time.sleep(0.01)
+                            pyautogui.mouseUp()
+                            time.sleep(2)
+
+                            result_color_3 = get_pixel_color(window.left + 464, window.top + 108)
+                            print("Evolution", result_color_3)
+                            time.sleep(1)
+
+                            # Check if crit evolved
+                            if result_color_3 == (107, 138, 19):
+                                # Click continue
+                                pyautogui.mouseDown(window.left + 580, window.top + 598) # Continue button
+                                time.sleep(0.01)
+                                pyautogui.mouseUp()
+                                time.sleep(1)
+
+                            # Exit training
+                            pyautogui.mouseDown(window.left + 928, window.top + 58) # Close button
+                            time.sleep(0.01)
+                            pyautogui.mouseUp()
+                            time.sleep(2)
+
                             result_color_4 = get_pixel_color(window.left + 593, window.top + 195)
                             print("Rank upgrade", result_color_4)
                             time.sleep(1)
