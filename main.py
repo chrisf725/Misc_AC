@@ -18,8 +18,6 @@ except IndexError:
 
 window.activate()
 
-# pyautogui.moveTo(window.left + 459, window.top + 279)
-
 plat_train_response = input("Do you want to platinum train? (yes/no/y/n): ").strip().lower()
 
 if plat_train_response not in ["yes", "y", "no", "n"]:
@@ -32,6 +30,13 @@ print(f"Platinum train: {plat_train}")
 # Store coordinates of search object
 click_coordinates = []
 
+exit_flag = False
+def check_exit():
+    global exit_flag
+    if keyboard.is_pressed('q'):
+        exit_flag = True
+        print("Exiting... 3")
+        exit()
 
 def on_click(x, y, button, pressed):
     if pressed and button == mouse.Button.right:
@@ -47,8 +52,11 @@ def on_click(x, y, button, pressed):
         else:
             print("Right click outside the window")
 
-plat_train = plat_train_response == "yes" or plat_train_response == "y"
-print(f"Platinum train: {plat_train}")
+def click_action(x, y, time_delay):
+    pyautogui.mouseDown(window.left + x, window.top + y)
+    time.sleep(0.01)
+    pyautogui.mouseUp()
+    time.sleep(time_delay)
 
 def get_pixel_color(x, y):
     screenshot = pyautogui.screenshot()
@@ -56,25 +64,23 @@ def get_pixel_color(x, y):
     del screenshot  # Free up memory
     return pixel_color
 
+print("Right click on the object you want to search for")
+with mouse.Listener(on_click=on_click) as listener:
+    listener.join()
+
 time.sleep(3)
 print(f"Click coordinates: {click_coordinates}")
 
 try:
-    while True:
-        if keyboard.is_pressed('q'):
-            print("Exiting...")
-            break
+    while not exit_flag:
+        check_exit()
 
         for coord in click_coordinates:
             # Move the mouse to the search object and click
             pyautogui.moveTo(window.left + coord[0], window.top + coord[1])
             time.sleep(1)
-            pyautogui.mouseDown(window.left + coord[0], window.top + coord[1])
-            time.sleep(0.01)
-            pyautogui.mouseUp()
+            click_action(coord[0], coord[1], 4)
             print(f"Clicked at ({coord[0]}, {coord[1]})")
-
-            time.sleep(4)
 
             # Define the region to check for the color of the enemy rarity
             # check_x = window.left + 740
@@ -89,10 +95,8 @@ try:
             pyautogui.moveTo(check_x, check_y)
             time.sleep(1)
 
-            while True:
-                if keyboard.is_pressed('q'):
-                    print("Exiting...")
-                    break
+            while not exit_flag:
+                check_exit()
 
                 result_color = get_pixel_color(window.left + 272, window.top + 122)
                 result_color_2 = get_pixel_color(window.left + 459, window.top + 279)
@@ -101,54 +105,36 @@ try:
                 # Continue script if crit is common
                 # End script if crit is rare and above
                 if color == (98, 98, 98): # Grey
+                    check_exit()
                     print(result_color_2)
                     time.sleep(1)
-                    pyautogui.mouseDown(window.left + 328, window.top + 621)
-                    time.sleep(0.01)
-                    pyautogui.mouseUp()
-                    time.sleep(1)
+                    click_action(328, 621, 1)
                     # pyautogui.moveTo(window.left + 459, window.top + 279)
                     # time.sleep(1)
                     
                     # Check if crit is ready to train
                     if result_color_2 == (255, 255, 255) and result_color == (107, 138, 19): # White and Green
+                        check_exit()
                         time.sleep(1)
                         # Click continue on results screen
-                        pyautogui.mouseDown(window.left + 574, window.top + 591)
-                        time.sleep(0.01)
-                        pyautogui.mouseUp()
-                        time.sleep(1)
+                        click_action(574, 591, 1)
 
                         # Click crit to train
-                        pyautogui.mouseDown(window.left + 301, window.top + 65) # Crit in second slot
-                        time.sleep(0.01)
-                        pyautogui.mouseUp()
-                        time.sleep(1)
+                        click_action(301, 65, 1)
 
                         # Training
                         pyautogui.mouseDown(window.left + 646, window.top + 88) # Train button
-                        time.sleep(0.01)
-                        pyautogui.mouseUp()
-                        time.sleep(1)
+                        click_action(646, 88, 1)
 
                         if plat_train:
                             for i in range(2):
                                 # Click platinum train
-                                pyautogui.mouseDown(window.left + 517, window.top + 635) # Platinum train button
-                                time.sleep(0.01)
-                                pyautogui.mouseUp()
-                                time.sleep(2)
+                                click_action(517, 635, 2) # Platinum train button
 
-                            pyautogui.mouseDown(window.left + 581, window.top + 639) # Continue button
-                            time.sleep(0.01)
-                            pyautogui.mouseUp()
-                            time.sleep(1)
+                            click_action(581, 639, 1) # Continue button
 
                             # Click continue again
-                            pyautogui.mouseDown(window.left + 705, window.top + 483) # Second continue button
-                            time.sleep(0.01)
-                            pyautogui.mouseUp()
-                            time.sleep(2)
+                            click_action(705, 483, 2) # Second continue button
 
                             result_color_3 = get_pixel_color(window.left + 464, window.top + 108)
                             print("Evolution", result_color_3)
@@ -157,16 +143,10 @@ try:
                             # Check if crit evolved
                             if result_color_3 == (107, 138, 19):
                                 # Click continue
-                                pyautogui.mouseDown(window.left + 580, window.top + 598) # Continue button
-                                time.sleep(0.01)
-                                pyautogui.mouseUp()
-                                time.sleep(1)
+                                click_action(580, 598, 1) # Continue button
 
                             # Exit training
-                            pyautogui.mouseDown(window.left + 928, window.top + 58) # Close button
-                            time.sleep(0.01)
-                            pyautogui.mouseUp()
-                            time.sleep(2)
+                            click_action(928, 58, 2) # Close button
 
                             result_color_4 = get_pixel_color(window.left + 593, window.top + 195)
                             print("Rank upgrade", result_color_4)
@@ -174,24 +154,15 @@ try:
 
                             # Close rank upgrade screen
                             if result_color_4 == (107, 138, 19):
-                                pyautogui.mouseDown(window.left + 589, window.top + 511) # Close button
-                                time.sleep(0.01)
-                                pyautogui.mouseUp()
-                                time.sleep(1)
+                                click_action(589, 511, 1) # Close button
                             
                         else:
                             for i in range(2):
                                 # Click continue
-                                pyautogui.mouseDown(window.left + 711, window.top + 639) # Continue button
-                                time.sleep(0.01)
-                                pyautogui.mouseUp()
-                                time.sleep(1)
+                                click_action(711, 639, 1) # Continue button
 
                             # Click continue again
-                            pyautogui.mouseDown(window.left + 705, window.top + 483) # Second continue button
-                            time.sleep(0.01)
-                            pyautogui.mouseUp()
-                            time.sleep(2)
+                            click_action(705, 483, 2) # Second continue button
 
                             result_color_3 = get_pixel_color(window.left + 464, window.top + 108)
                             print("Evolution", result_color_3)
@@ -200,16 +171,10 @@ try:
                             # Check if crit evolved
                             if result_color_3 == (107, 138, 19):
                                 # Click continue
-                                pyautogui.mouseDown(window.left + 580, window.top + 598) # Continue button
-                                time.sleep(0.01)
-                                pyautogui.mouseUp()
-                                time.sleep(1)
+                                click_action(580, 598, 1) # Continue button
 
                             # Exit training
-                            pyautogui.mouseDown(window.left + 928, window.top + 58) # Close button
-                            time.sleep(0.01)
-                            pyautogui.mouseUp()
-                            time.sleep(2)
+                            click_action(928, 58, 2) # Close button
 
                             result_color_4 = get_pixel_color(window.left + 593, window.top + 195)
                             print("Rank upgrade", result_color_4)
@@ -217,22 +182,20 @@ try:
 
                             # Close rank upgrade screen
                             if result_color_4 == (107, 138, 19):
-                                pyautogui.mouseDown(window.left + 589, window.top + 511) # Close button
-                                time.sleep(0.01)
-                                pyautogui.mouseUp()
-                                time.sleep(1)
+                                click_action(589, 511, 1) # Close button
                         break
                     # If crit is not ready to train, continue
                     if result_color_2 == (94, 108, 126): # Grey
+                        check_exit()
                         time.sleep(1)
                         # Click continue on results screen
-                        pyautogui.mouseDown(window.left + 574, window.top + 591)
-                        time.sleep(0.01)
-                        pyautogui.mouseUp()
+                        click_action(574, 591, 0)
                         break
                 else:
+                    check_exit()
                     print("Not common")
                     break
             break
 except KeyboardInterrupt:
     print("Program interrupted by user")
+    exit()
