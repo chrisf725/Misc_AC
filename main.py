@@ -4,6 +4,7 @@ from pynput import mouse
 import time
 from PIL import Image
 import keyboard
+import threading
 
 pyautogui.FAILSAFE = True
 
@@ -30,13 +31,33 @@ print(f"Platinum train: {plat_train}")
 # Store coordinates of search object
 click_coordinates = []
 
+paused = False
+def toggle_pause():
+    global paused
+    while True:
+        if keyboard.is_pressed('p'):
+            paused = not paused
+            state = "Paused" if paused else "Resumed"
+            print(f"{state}...")
+            time.sleep(0.5)
+        time.sleep(0.1)
+
+pause_thread = threading.Thread(target=toggle_pause, daemon=True)
+pause_thread.start()
+
 exit_flag = False
 def check_exit():
     global exit_flag
-    if keyboard.is_pressed('q'):
-        exit_flag = True
-        print("Exiting... 3")
-        exit()
+    while not exit_flag:
+        if keyboard.is_pressed('q'):
+            exit_flag = True
+            print("Exiting... 3")
+            exit()
+            break
+        time.sleep(0.1)
+
+exit_thread = threading.Thread(target=check_exit, daemon=True)
+exit_thread.start()
 
 def on_click(x, y, button, pressed):
     if pressed and button == mouse.Button.right:
@@ -64,6 +85,10 @@ def get_pixel_color(x, y):
     del screenshot  # Free up memory
     return pixel_color
 
+def is_blue_pixel(color, blue_threshold=150, other_max=100):
+    r, g, b = color
+    return b > blue_threshold and r <= other_max and g <= other_max
+
 print("Right click on the object you want to search for")
 with mouse.Listener(on_click=on_click) as listener:
     listener.join()
@@ -73,7 +98,10 @@ print(f"Click coordinates: {click_coordinates}")
 
 try:
     while not exit_flag:
-        check_exit()
+        # check_exit()
+        if paused:
+            time.sleep(0.1)
+            continue
 
         for coord in click_coordinates:
             # Move the mouse to the search object and click
@@ -95,8 +123,12 @@ try:
             pyautogui.moveTo(check_x, check_y)
             time.sleep(1)
 
+            if exit_flag:
+                print("Exiting... 2")
+                break
+
             while not exit_flag:
-                check_exit()
+                # check_exit()
 
                 result_color = get_pixel_color(window.left + 272, window.top + 122)
                 result_color_2 = get_pixel_color(window.left + 459, window.top + 279)
@@ -105,16 +137,18 @@ try:
                 # Continue script if crit is common
                 # End script if crit is rare and above
                 if color == (98, 98, 98): # Grey
-                    check_exit()
+                    # check_exit()
                     print(result_color_2)
                     time.sleep(1)
                     click_action(328, 621, 1)
+
+                    
                     # pyautogui.moveTo(window.left + 459, window.top + 279)
                     # time.sleep(1)
                     
                     # Check if crit is ready to train
                     if result_color_2 == (255, 255, 255) and result_color == (107, 138, 19): # White and Green
-                        check_exit()
+                        # check_exit()
                         time.sleep(1)
                         # Click continue on results screen
                         click_action(574, 591, 1)
@@ -186,16 +220,21 @@ try:
                         break
                     # If crit is not ready to train, continue
                     if result_color_2 == (94, 108, 126): # Grey
-                        check_exit()
+                        # check_exit()
                         time.sleep(1)
                         # Click continue on results screen
                         click_action(574, 591, 0)
                         break
                 else:
-                    check_exit()
+                    # check_exit()
                     print("Not common")
+                    if is_blue_pixel(color):
+                        print("Rare crit")
                     break
             break
 except KeyboardInterrupt:
     print("Program interrupted by user")
     exit()
+# finally:
+#     print("Exiting script...")
+#     exit()
