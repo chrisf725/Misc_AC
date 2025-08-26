@@ -146,13 +146,15 @@ try:
             # Define the region to check for the color of the enemy rarity
             # check_x = window.left + 740
             # check_y = window.top + 53
-            enemy_rarity_x = int(window.width * 0.633)
-            enemy_rarity_y = int(window.height * 0.077)
+            # enemy_rarity_x = int(window.width * 0.633)
+            # enemy_rarity_y = int(window.height * 0.077)
+            enemy_rarity_x = 780
+            enemy_rarity_y = 61
             check_x = window.left + enemy_rarity_x
             check_y = window.top + enemy_rarity_y
 
             color = get_pixel_color(check_x, check_y)
-            print(f"Color at ({check_x}, {check_y}): {color}")
+            print(f"Color for enemy rarity at ({check_x}, {check_y}): {color}")
             pyautogui.moveTo(check_x, check_y)
             # time.sleep(1)
             smart_sleep(1)
@@ -166,108 +168,113 @@ try:
 
                 result_color = get_pixel_color(window.left + 272, window.top + 122)
                 # result_color_2 = get_pixel_color(window.left + 459, window.top + 279)
-                result_color_2 = get_pixel_color(window.left + 446, window.top + 276)
+                # result_color_2 = get_pixel_color(window.left + 446, window.top + 276) # Experience bar color
 
                 # pyautogui.moveTo(window.left + 272, window.top + 122)
                 # Continue script if crit is common
                 # End script if crit is rare and above
                 if color == (98, 98, 98) or (bypass_rare and is_blue_pixel(color)): # Grey
                     # check_exit()
-                    print("XP bar color: ", result_color_2)
-                    # time.sleep(1)
-                    smart_sleep(1)
                     click_action(328, 621, 2)
                     # pyautogui.moveTo(window.left + 446, window.top + 276)
 
-                    
                     # pyautogui.moveTo(window.left + 459, window.top + 279)
                     # time.sleep(1)
                     
                     # Check if crit is ready to train
-                    if is_yellow_pixel(result_color_2): # and result_color == (107, 138, 19): # White and Green
-                        # check_exit()
+                    if result_color == (107, 138, 19):
+                        print("Results screen")
+                        result_color_2 = get_pixel_color(window.left + 446, window.top + 276) # Experience bar color
+                        print("XP bar color: ", result_color_2)
+                        pyautogui.moveTo(window.left + 446, window.top + 276)
                         # time.sleep(1)
                         smart_sleep(1)
-                        # Click continue on results screen
-                        click_action(574, 591, 1)
-
-                        # Click crit to train
-                        click_action(301, 65, 1)
-
-                        # Training
-                        pyautogui.mouseDown(window.left + 646, window.top + 88) # Train button
-                        click_action(646, 88, 1)
-
-                        if plat_train:
-                            for i in range(2):
-                                # Click platinum train
-                                click_action(517, 635, 2) # Platinum train button
-
-                            click_action(581, 639, 1) # Continue button
-
-                            # Click continue again
-                            click_action(705, 483, 2) # Second continue button
-
-                            result_color_3 = get_pixel_color(window.left + 464, window.top + 108)
-                            print("Evolution", result_color_3)
-                            # time.sleep(1)
-                            smart_sleep(1)
-
-                            # Check if crit evolved
-                            if result_color_3 == (107, 138, 19):
-                                # Click continue
-                                click_action(580, 598, 1) # Continue button
-
-                            # Exit training
-                            click_action(928, 58, 2) # Close button
-
-                            result_color_4 = get_pixel_color(window.left + 593, window.top + 195)
-                            print("Rank upgrade", result_color_4)
-                            # time.sleep(1)
-                            smart_sleep(1)
-
-                            # Close rank upgrade screen
-                            if result_color_4 == (107, 138, 19):
-                                click_action(589, 511, 1) # Close button
-                            
-                        else:
-                            for i in range(2):
-                                # Click continue
-                                click_action(711, 639, 1) # Continue button
-
-                            # Click continue again
-                            click_action(705, 483, 2) # Second continue button
-
-                            result_color_3 = get_pixel_color(window.left + 464, window.top + 108)
-                            print("Evolution", result_color_3)
-                            # time.sleep(1)
-                            smart_sleep(1)
-
-                            # Check if crit evolved
-                            if result_color_3 == (107, 138, 19):
-                                # Click continue
-                                click_action(580, 598, 1) # Continue button
-
-                            # Exit training
-                            click_action(928, 58, 2) # Close button
-
-                            result_color_4 = get_pixel_color(window.left + 593, window.top + 195)
-                            print("Rank upgrade", result_color_4)
-                            # time.sleep(1)
-                            smart_sleep(1)
-
-                            # Close rank upgrade screen
-                            if result_color_4 == (107, 138, 19):
-                                click_action(589, 511, 1) # Close button
-                        break
-                    # If crit is not ready to train, continue
-                    if is_blue_pixel(result_color_2) or is_dark_grey_pixel(result_color_2) or is_cyan_pixel(result_color_2): # result_color_2 == (94, 108, 126): # Grey
-                        # check_exit()
-                        # time.sleep(1)
+                        # click_action(328, 621, 2)
                         smart_sleep(1)
-                        # Click continue on results screen
-                        click_action(574, 591, 0)
-                        break
+                        if is_yellow_pixel(result_color_2): # and result_color == (107, 138, 19): # White and Green
+                            # check_exit()
+                            # time.sleep(1)
+                            smart_sleep(1)
+                            # Click continue on results screen
+                            click_action(574, 591, 1)
+
+                            # Click crit to train
+                            click_action(301, 65, 1)
+
+                            # Training
+                            pyautogui.mouseDown(window.left + 646, window.top + 88) # Train button
+                            click_action(646, 88, 1)
+
+                            if plat_train:
+                                for i in range(2):
+                                    # Click platinum train
+                                    click_action(517, 635, 3) # Platinum train button
+
+                                click_action(581, 639, 1) # Continue button
+
+                                # Click continue again
+                                click_action(705, 483, 2) # Second continue button
+
+                                result_color_3 = get_pixel_color(window.left + 464, window.top + 108)
+                                print("Evolution", result_color_3)
+                                # time.sleep(1)
+                                smart_sleep(1)
+
+                                # Check if crit evolved
+                                if result_color_3 == (107, 138, 19):
+                                    # Click continue
+                                    click_action(580, 598, 1) # Continue button
+
+                                # Exit training
+                                click_action(928, 58, 2) # Close button
+
+                                result_color_4 = get_pixel_color(window.left + 593, window.top + 195)
+                                print("Rank upgrade", result_color_4)
+                                # time.sleep(1)
+                                smart_sleep(1)
+
+                                # Close rank upgrade screen
+                                if result_color_4 == (107, 138, 19):
+                                    click_action(589, 511, 1) # Close button
+                                
+                            else:
+                                for i in range(2):
+                                    # Click continue
+                                    click_action(711, 639, 1) # Continue button
+
+                                # Click continue again
+                                click_action(705, 483, 2) # Second continue button
+
+                                result_color_3 = get_pixel_color(window.left + 464, window.top + 108)
+                                print("Evolution", result_color_3)
+                                # time.sleep(1)
+                                smart_sleep(1)
+
+                                # Check if crit evolved
+                                if result_color_3 == (107, 138, 19):
+                                    # Click continue
+                                    click_action(580, 598, 1) # Continue button
+
+                                # Exit training
+                                click_action(928, 58, 2) # Close button
+
+                                result_color_4 = get_pixel_color(window.left + 593, window.top + 195)
+                                print("Rank upgrade", result_color_4)
+                                # time.sleep(1)
+                                smart_sleep(1)
+
+                                # Close rank upgrade screen
+                                if result_color_4 == (107, 138, 19):
+                                    click_action(589, 511, 1) # Close button
+                            break
+                        # If crit is not ready to train, continue
+                        if is_blue_pixel(result_color_2) or is_dark_grey_pixel(result_color_2) or is_cyan_pixel(result_color_2): # result_color_2 == (94, 108, 126): # Grey
+                            # check_exit()
+                            # time.sleep(1)
+                            smart_sleep(1)
+                            # Click continue on results screen
+                            click_action(574, 591, 2)
+                            break
                 else:
                     # check_exit()
                     print("Not common")
