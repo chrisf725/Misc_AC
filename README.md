@@ -18,4 +18,5 @@ Things to note:
 
 
 TODO:
+- Add condition where in case of second crit being rare+, stop attacking when it comes on the field
 - Add interactable GUI (maybe)
